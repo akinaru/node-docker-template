@@ -1,0 +1,54 @@
+version: '2'
+services:
+  nodejs-server1:
+    build: https://github.com/akinaru/node-docker-template.git#node-service1
+    image: node-service1
+    ports:
+     - "4001:4001"
+    container_name: service1_container
+    volumes:
+     - ./log:/app/log
+    external_links:
+     - mongodb_container
+    depends_on:
+     - mongodb
+  nodejs-server2:
+    build: https://github.com/akinaru/node-docker-template.git#node-service2
+    image: node-service2
+    ports:
+     - "4002:4002"
+    container_name: service2_container
+    volumes:
+     - ./log:/app/log
+    external_links:
+     - mongodb_container
+    depends_on:
+     - mongodb
+  nodejs-server3:
+    build: https://github.com/akinaru/node-docker-template.git#node-service3
+    image: node-service3
+    ports:
+     - "4003:4003"
+    container_name: service3_container
+    volumes:
+     - ./log:/app/log
+    external_links:
+     - mongodb_container
+    depends_on:
+     - mongodb
+  mongodb:
+    image: mongo:3.2
+    ports:
+     - "27017:27017"
+    container_name: mongodb_container
+    volumes:
+     - ./mongodb:/var/log/mongodb
+     - ./mongodb_dir:/data/db
+  logstash:
+    image: logstash
+    container_name: logstash_container
+    command: logstash -f /var/www/logstash.conf
+    volumes:
+     - ./key:/key
+     - ./log:/log
+     - ./logstash:/var/www
