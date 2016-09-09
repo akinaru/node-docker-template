@@ -24,8 +24,8 @@ nodejs-server3:
     - mongodb
 mongodb:
   image: 'mongo:3.2'
-  ports:
-    - "27017:27017"
+  expose:
+    - "27017"
   volumes:
     - {USER_PATH}/mongodb:/var/log/mongodb
     - {USER_PATH}/mongodb_dir:/data/db
