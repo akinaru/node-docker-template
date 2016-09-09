@@ -7,6 +7,8 @@ var winston = require('winston');
 
 var app = express();
 
+var mongoAddr = process.env.MONGODB_PORT_27017_TCP_ADDR;
+
 if (!process.env.SERVER_NAME) {
 	console.log("SERVER_NAME not defined");
 	process.exit(1);
@@ -42,6 +44,10 @@ if (!process.env.MONGODB_PORT_27017_TCP_PORT) {
 	console.log("MONGODB_PORT_27017_TCP_PORT : " + process.env.MONGODB_PORT_27017_TCP_PORT);
 }
 
+if (process.env.MONGODB_ADDR) {
+	mongoAddr = MONGODB_ADDR;
+}
+
 var logger = new winston.Logger({
 	transports: [
 		new winston.transports.File({
@@ -75,7 +81,7 @@ app.use(require("morgan")("combined", {
 
 var MongoClient = mongodb.MongoClient;
 
-var url = 'mongodb://' + process.env.MONGODB_PORT_27017_TCP_ADDR + ':' + process.env.MONGODB_PORT_27017_TCP_PORT + '/my_database_name';
+var url = 'mongodb://' + mongoAddr + ':' + process.env.MONGODB_PORT_27017_TCP_PORT + '/my_database_name';
 
 MongoClient.connect(url, function(err, db) {
 	if (err) {

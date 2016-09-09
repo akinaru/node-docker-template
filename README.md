@@ -5,11 +5,6 @@ A template project to show how to use docker containers to run several services 
 * docker orchestration with <a href="https://cloud.docker.com/_/dashboard/onboarding">docker-cloud</a>
 * log recovery from <a href="https://www.elastic.co/products/logstash">Logstash</a> to <a href="https://www.elastic.co/products/elasticsearch">ElasticSearch</a>
 
-3 NodeJS services featuring distinct docker containers are located on branches :
-* <a href="https://github.com/akinaru/node-docker-template/tree/node-service1">node-service1</a>
-* <a href="https://github.com/akinaru/node-docker-template/tree/node-service2">node-service2</a>
-* <a href="https://github.com/akinaru/node-docker-template/tree/node-service3">node-service3</a>
-
 ## Build locally
 
 Before running :
