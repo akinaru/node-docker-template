@@ -28,11 +28,11 @@ if (!process.env.LOG_DIR) {
 	console.log("LOG_DIR     : " + process.env.LOG_DIR);
 }
 
-if (!process.env.MONGODB_ENV_DOCKERCLOUD_SERVICE_HOSTNAME) {
-	console.log("MONGODB_ENV_DOCKERCLOUD_SERVICE_HOSTNAME not defined");
+if (!process.env.MONGO_ENV_DOCKERCLOUD_SERVICE_HOSTNAME) {
+	console.log("MONGO_ENV_DOCKERCLOUD_SERVICE_HOSTNAME not defined");
 	process.exit(1);
 } else {
-	console.log("MONGODB_ENV_DOCKERCLOUD_SERVICE_HOSTNAME     : " + process.env.LOG_DIR);
+	console.log("MONGO_ENV_DOCKERCLOUD_SERVICE_HOSTNAME     : " + process.env.LOG_DIR);
 }
 
 var logger = new winston.Logger({
@@ -68,7 +68,7 @@ app.use(require("morgan")("combined", {
 
 var MongoClient = mongodb.MongoClient;
 
-var url = 'mongodb://' + process.env.MONGODB_ENV_DOCKERCLOUD_SERVICE_HOSTNAME + ':27017/my_database_name';
+var url = 'mongodb://' + process.env.MONGO_ENV_DOCKERCLOUD_SERVICE_HOSTNAME + ':27017/my_database_name';
 
 logger.info("connecting to " + url);
 
