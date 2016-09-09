@@ -34,18 +34,14 @@ Before building images, you need to have an <a href="https://cloud.docker.com/_/
 export DOCKER_ID_USER=your_userid
 ```
 
-* Build docker images of the 3 distinct NodeJS services :  
+* Build docker images of a NodeJS template server :  
 ```
-docker build -t $DOCKER_ID_USER/node-service1 github.com/akinaru/node-docker-template.git#node-service1
-docker build -t $DOCKER_ID_USER/node-service2 github.com/akinaru/node-docker-template.git#node-service2
-docker build -t $DOCKER_ID_USER/node-service3 github.com/akinaru/node-docker-template.git#node-service3
+docker build -t $DOCKER_ID_USER/node-service github.com/akinaru/node-docker-template.git
 ```
 
-* Push docker images to new public repositories on docker-cloud :
+* Push docker images to a new public repository on docker-cloud :
 ```
-docker push $DOCKER_ID_USER/node-service1
-docker push $DOCKER_ID_USER/node-service2
-docker push $DOCKER_ID_USER/node-service3
+docker push $DOCKER_ID_USER/node-service
 ```
 
 ![repository](img/repo.png)

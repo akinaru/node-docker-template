@@ -1,5 +1,5 @@
 nodejs-server1:
-  image: '{DOCKER_ID_USER}/node-service1'
+  image: '{DOCKER_ID_USER}/node-service'
   ports:
     - "4001:4001"
   volumes:
@@ -12,7 +12,7 @@ nodejs-server1:
     - SERVER_PORT=4001
     - SERVER_NAME=service1
 nodejs-server2:
-  image: '{DOCKER_ID_USER}/node-service2'
+  image: '{DOCKER_ID_USER}/node-service'
   ports:
     - "4002:4002"
   volumes:
@@ -25,7 +25,7 @@ nodejs-server2:
     - SERVER_PORT=4002
     - SERVER_NAME=service2
 nodejs-server3:
-  image: '{DOCKER_ID_USER}/node-service3'
+  image: '{DOCKER_ID_USER}/node-service'
   ports:
     - "4003:4003"
   volumes:
