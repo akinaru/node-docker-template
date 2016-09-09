@@ -4,6 +4,8 @@ var express = require('express');
 var mongodb = require('mongodb');
 var morgan = require('morgan')
 var winston = require('winston');
+var os = require("os");
+var hostname = os.hostname();
 
 var app = express();
 
@@ -26,13 +28,6 @@ if (!process.env.LOG_DIR) {
 	process.exit(1);
 } else {
 	console.log("LOG_DIR     : " + process.env.LOG_DIR);
-}
-
-if (!process.env.MONGODB_ENV_DOCKERCLOUD_SERVICE_HOSTNAME) {
-	console.log("MONGODB_ENV_DOCKERCLOUD_SERVICE_HOSTNAME not defined");
-	process.exit(1);
-} else {
-	console.log("MONGODB_ENV_DOCKERCLOUD_SERVICE_HOSTNAME : " + process.env.MONGODB_ENV_DOCKERCLOUD_SERVICE_HOSTNAME);
 }
 
 var logger = new winston.Logger({
@@ -68,7 +63,9 @@ app.use(require("morgan")("combined", {
 
 var MongoClient = mongodb.MongoClient;
 
-var url = 'mongodb://' + process.env.MONGODB_ENV_DOCKERCLOUD_SERVICE_HOSTNAME + ':27017/my_database_name';
+var url = 'mongodb://' + hostname + ':27017/my_database_name';
+
+logger.info("connecting to " + url);
 
 MongoClient.connect(url, function(err, db) {
 	if (err) {
