@@ -1,0 +1,6 @@
+stackfile.yml
+key/
+log/
+mongodb/
+mongodb_dir/
+logstash/logstash-actual.conf
