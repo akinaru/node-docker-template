@@ -45,7 +45,8 @@ if (!process.env.MONGODB_PORT_27017_TCP_PORT) {
 }
 
 if (process.env.MONGODB_ADDR) {
-	mongoAddr = MONGODB_ADDR;
+	console.log("process.env.MONGODB_ADDR : " + process.env.MONGODB_ADDR);
+	mongoAddr = process.env.MONGODB_ADDR;
 }
 
 var logger = new winston.Logger({
