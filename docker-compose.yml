@@ -17,7 +17,7 @@ services:
     - LOG_DIR=./log/
     - SERVER_PORT=4001
     - SERVER_NAME=service1
-    - MONGO_SERVICE_HOSTNAME=mongo
+    - MONGO_SERVICE_HOSTNAME=mongodb
   nodejs-server2:
     build: https://github.com/akinaru/node-docker-template.git
     image: node-service2
@@ -35,7 +35,7 @@ services:
     - LOG_DIR=./log/
     - SERVER_PORT=4002
     - SERVER_NAME=service2
-    - MONGO_SERVICE_HOSTNAME=mongo
+    - MONGO_SERVICE_HOSTNAME=mongodb
   nodejs-server3:
     build: https://github.com/akinaru/node-docker-template.git
     image: node-service3
@@ -53,13 +53,15 @@ services:
     - LOG_DIR=./log/
     - SERVER_PORT=4003
     - SERVER_NAME=service3
-    - MONGO_SERVICE_HOSTNAME=mongo
+    - MONGO_SERVICE_HOSTNAME=mongodb
   mongodb:
     image: mongo:3.2
     container_name: mongodb_container
+    command: /bin/bash -c "chown -R mongodb /var/log/mongodb; mongod --config /etc/mongodb/mongod.conf"
     volumes:
-     - ./mongodb:/var/log/mongodb
-     - ./mongodb_dir:/data/db
+     - ./mongodb/log:/var/log/mongodb
+     - ./mongodb/conf/mongod.conf:/etc/mongodb/mongod.conf
+     - ./mongodb/data:/var/lib/mongodb
   logstash:
     image: logstash
     container_name: logstash_container
@@ -68,3 +70,4 @@ services:
      - ./key:/key
      - ./log:/log
      - ./logstash:/var/www
+     - ./mongodb/log:/mongodb/log
