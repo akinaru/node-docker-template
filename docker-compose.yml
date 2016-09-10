@@ -1,7 +1,7 @@
 version: '2'
 services:
   nodejs-server1:
-    build: https://github.com/akinaru/node-docker-template.git#node-service1
+    build: https://github.com/akinaru/node-docker-template.git
     image: node-service1
     ports:
      - "4001:4001"
@@ -12,8 +12,14 @@ services:
      - mongodb_container
     depends_on:
      - mongodb
+    environment:
+    - NODE_ENV=production
+    - LOG_DIR=./log/
+    - SERVER_PORT=4001
+    - SERVER_NAME=service1
+    - MONGO_SERVICE_HOSTNAME=mongo
   nodejs-server2:
-    build: https://github.com/akinaru/node-docker-template.git#node-service2
+    build: https://github.com/akinaru/node-docker-template.git
     image: node-service2
     ports:
      - "4002:4002"
@@ -24,8 +30,14 @@ services:
      - mongodb_container
     depends_on:
      - mongodb
+    environment:
+    - NODE_ENV=production
+    - LOG_DIR=./log/
+    - SERVER_PORT=4002
+    - SERVER_NAME=service2
+    - MONGO_SERVICE_HOSTNAME=mongo
   nodejs-server3:
-    build: https://github.com/akinaru/node-docker-template.git#node-service3
+    build: https://github.com/akinaru/node-docker-template.git
     image: node-service3
     ports:
      - "4003:4003"
@@ -36,10 +48,14 @@ services:
      - mongodb_container
     depends_on:
      - mongodb
+    environment:
+    - NODE_ENV=production
+    - LOG_DIR=./log/
+    - SERVER_PORT=4003
+    - SERVER_NAME=service3
+    - MONGO_SERVICE_HOSTNAME=mongo
   mongodb:
     image: mongo:3.2
-    ports:
-     - "27017:27017"
     container_name: mongodb_container
     volumes:
      - ./mongodb:/var/log/mongodb
@@ -47,7 +63,7 @@ services:
   logstash:
     image: logstash
     container_name: logstash_container
-    command: logstash -f /var/www/logstash.conf
+    command: logstash -f /var/www/logstash-actual.conf
     volumes:
      - ./key:/key
      - ./log:/log
