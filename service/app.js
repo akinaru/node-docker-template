@@ -5,6 +5,12 @@ var mongodb = require('mongodb');
 var morgan = require('morgan')
 var winston = require('winston');
 
+if (process.env.SENTRY_TOKEN) {
+	var raven = require('raven');
+	var client = new raven.Client(process.env.SENTRY_TOKEN);
+	client.patchGlobal();
+}
+
 var app = express();
 
 if (!process.env.SERVER_NAME) {

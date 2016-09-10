@@ -13,6 +13,7 @@
     "mongodb": "^2.2.9",
     "morgan": "^1.7.0",
     "os": "^0.1.1",
+    "raven": "^0.12.1",
     "winston": "^2.2.0"
   },
   "devDependencies": {}

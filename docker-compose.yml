@@ -3,6 +3,8 @@ services:
   nodejs-server1:
     build: https://github.com/akinaru/node-docker-template.git
     image: node-service1
+    env_file: 
+     - global.env
     ports:
      - "4001:4001"
     container_name: service1_container
@@ -13,14 +15,14 @@ services:
     depends_on:
      - mongodb
     environment:
-    - NODE_ENV=production
-    - LOG_DIR=./log/
-    - SERVER_PORT=4001
-    - SERVER_NAME=service1
-    - MONGO_SERVICE_HOSTNAME=mongodb
+     - SENTRY_TOKEN=${SENTRY_TOKEN}
+     - SERVER_PORT=4001
+     - SERVER_NAME=service1
   nodejs-server2:
     build: https://github.com/akinaru/node-docker-template.git
     image: node-service2
+    env_file: 
+     - global.env
     ports:
      - "4002:4002"
     container_name: service2_container
@@ -31,14 +33,14 @@ services:
     depends_on:
      - mongodb
     environment:
-    - NODE_ENV=production
-    - LOG_DIR=./log/
-    - SERVER_PORT=4002
-    - SERVER_NAME=service2
-    - MONGO_SERVICE_HOSTNAME=mongodb
+     - SENTRY_TOKEN=${SENTRY_TOKEN}
+     - SERVER_PORT=4002
+     - SERVER_NAME=service2
   nodejs-server3:
     build: https://github.com/akinaru/node-docker-template.git
     image: node-service3
+    env_file: 
+     - global.env
     ports:
      - "4003:4003"
     container_name: service3_container
@@ -49,11 +51,9 @@ services:
     depends_on:
      - mongodb
     environment:
-    - NODE_ENV=production
-    - LOG_DIR=./log/
-    - SERVER_PORT=4003
-    - SERVER_NAME=service3
-    - MONGO_SERVICE_HOSTNAME=mongodb
+     - SENTRY_TOKEN=${SENTRY_TOKEN}
+     - SERVER_PORT=4003
+     - SERVER_NAME=service3
   mongodb:
     image: mongo:3.2
     container_name: mongodb_container
@@ -71,3 +71,13 @@ services:
      - ./log:/log
      - ./logstash:/var/www
      - ./mongodb/log:/mongodb/log
+  cadvisor:
+    image: google/cadvisor
+    container_name: cadvisor_container
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    ports:
+     - "4000:8080"
