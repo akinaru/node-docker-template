@@ -47,29 +47,43 @@ docker push $DOCKER_ID_USER/node-service
 sudo useradd -G docker bobby
 ```
 
-* place your ElasticSearch keystore file in `/home/bobby/key` & your <a href="https://github.com/akinaru/node-docker-template/blob/master/logstash/logstash.conf">logstash configuration file</a> in `/home/bobby/logstash` on your VM host :
+* place your ElasticSearch keystore file in `/home/bobby/key` on your VM host :
 
 ```
 bobby:/home/bobby/key# ls
 keystore.jks
 ```
 
-and for logstash config : 
-
-```
-bobby:/home/bobby/logstash# ls
-logstash.conf
-```
-
 This way, the reference `/home/bobby/keystore.jks` & `/home/bobby/logstash.conf` will be valid in your configuration file
 
 * On your computer, generate `Stackfile.yml` which is a docker-compose-like configuration like of all your services that will be running on your host :
 
+
+Edit vars.template with your configuration :
 ```
-export USER_PATH=/home/bobby
-sed -e "s/{DOCKER_ID_USER}/${DOCKER_ID_USER//\//\\/}/" \
-    -e "s/{USER_PATH}/${USER_PATH//\//\\/}/" \
-    stackfile-template.yml > stackfile.yml
+#docker cloud user id
+USER_PATH=
+
+#your docker user on your host
+USER_PATH=/home/bobby
+
+#sentry token for nodeJS service crashlytics
+SENTRY_TOKEN=
+
+# ElasticSearch server configuration
+ES_HOST=
+ES_PORT=9200
+ES_USER=
+ES_PASS=
+ES_USESSL=true
+ES_KEYSTORE_PATH=/key/keystore.jks
+ES_KEYSTORE_PASS=
+```
+
+Eventually, generate stackfile :
+```
+source vars.template
+./generate_stack.sh
 ```
 
 This will give you `stackfile.yml` with absolute path for data volumes which is required by docker cloud
@@ -195,23 +209,28 @@ input {
     type => "server3"
     start_position => "beginning"
   }
+  file {
+    type => "mongodb"
+    path => "/var/log/mongodb/mongod.log"
+    start_position => "beginning"
+  }
+}
+
+filter {
+    json {
+        source => "message"
+    }
 }
 
 output {
   elasticsearch { 
-	hosts => ["your-elasticsearch-host:9200"] 
-        user => "your-user"
-        password => "your-password"
-        ssl => true
-        keystore =>  "/key/keystore.jks"
-        keystore_password =>  "your-keystore-password"
+        hosts => ["${ES_HOST}:${ES_PORT}"] 
+        user => "${ES_USER}"
+        password => "${ES_PASS}"
+        ssl => ${ES_USESSL}
+        keystore =>  "${ES_KEYSTORE_PATH}"
+        keystore_password =>  "${ES_KEYSTORE_PASS}"
   }
-}
- 
-filter {
-    json {
-      source => "message"
-    }
 }
 ```
 
@@ -221,15 +240,13 @@ filter {
 |-------------|-------------|
 | `./key:/key`  | path to the local keystore stored on the host machine |
 | `./log:/log`  | path to the log directory where we have all services logs |
-| `./logstash-conf:/var/www` | path to the logstash configuration (see above) |
+| `./mongodb/log:/mongodb/log` | path to the mongodb log directory |
 
 ### Notifications
 
-Get notified when docker container status change. There is even a <a href="https://slack.com/">Slack</a> integration !
+Get notified when docker container status change. There is also a <a href="https://slack.com/">Slack</a> integration
 
 ![notification](img/notif.png)
-
-
 
 ### External Links
 

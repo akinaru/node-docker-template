@@ -1,54 +1,68 @@
 nodejs-server1:
-  image: '{DOCKER_ID_USER}/node-service'
+  image: '${DOCKER_ID_USER}/node-service'
   ports:
-    - "4001:4001"
+    - "5001:4001"
   volumes:
-    - {USER_PATH}/log:/app/log
+    - ${USER_PATH}/log:/app/log
   links:
-    - mongodb:mongodb
+    - mongo:mongo
   environment:
     - NODE_ENV=production
     - LOG_DIR=./log/
     - SERVER_PORT=4001
     - SERVER_NAME=service1
+    - MONGO_SERVICE_HOSTNAME=mongo
+    - SENTRY_TOKEN=${SENTRY_TOKEN}
 nodejs-server2:
-  image: '{DOCKER_ID_USER}/node-service'
+  image: '${DOCKER_ID_USER}/node-service'
   ports:
-    - "4002:4002"
+    - "5002:4002"
   volumes:
-    - {USER_PATH}/log:/app/log
+    - ${USER_PATH}/log:/app/log
   links:
-    - mongodb:mongodb
+    - mongo:mongo
   environment:
     - NODE_ENV=production
     - LOG_DIR=./log/
     - SERVER_PORT=4002
     - SERVER_NAME=service2
+    - MONGO_SERVICE_HOSTNAME=mongo
+    - SENTRY_TOKEN=${SENTRY_TOKEN}
 nodejs-server3:
-  image: '{DOCKER_ID_USER}/node-service'
+  image: '${DOCKER_ID_USER}/node-service'
   ports:
-    - "4003:4003"
+    - "5003:4003"
   volumes:
-    - {USER_PATH}/log:/app/log
+    - ${USER_PATH}/log:/app/log
   links:
-    - mongodb:mongodb
+    - mongo:mongo
   environment:
     - NODE_ENV=production
     - LOG_DIR=./log/
     - SERVER_PORT=4003
     - SERVER_NAME=service3
-mongodb:
-  image: 'mongo:3.2'
-  ports:
-    - '27018:27017'
-    - '28018:28017'
+    - MONGO_SERVICE_HOSTNAME=mongo
+    - SENTRY_TOKEN=${SENTRY_TOKEN}
+mongo:
+  image: mongo:3.2
+  command: /bin/bash -c "chown -R mongodb /var/log/mongodb; mongod --config /etc/mongodb/mongod.conf"
   volumes:
-    - {USER_PATH}/mongodb:/var/log/mongodb
-    - {USER_PATH}/mongodb_dir:/data/db
+   - ${USER_PATH}/mongodb/log:/var/log/mongodb
+   - ${USER_PATH}/mongodb/conf/mongod.conf:/etc/mongodb/mongod.conf
+   - ${USER_PATH}/mongodb/data:/var/lib/mongodb
 logstash:
   image: 'logstash'
-  command: logstash -f /var/www/logstash.conf
+  command: logstash -e '${LOGSTASH_CONFIG}'
   volumes:
-   - {USER_PATH}/key:/key
-   - {USER_PATH}/log:/log
-   - {USER_PATH}/logstash:/var/www
+   - ${USER_PATH}/key:/key
+   - ${USER_PATH}/log:/log
+   - ${USER_PATH}/mongodb/log:/mongodb/log
+cadvisor:
+  image: 'google/cadvisor'
+  volumes:
+    - /:/rootfs:ro
+    - /var/run:/var/run:rw
+    - /sys:/sys:ro
+    - /var/lib/docker/:/var/lib/docker:ro
+  ports:
+   - "4000:8080"

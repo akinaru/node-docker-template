@@ -1,10 +1,8 @@
 version: '2'
 services:
   nodejs-server1:
-    build: https://github.com/akinaru/node-docker-template.git
+    build: .
     image: node-service1
-    env_file: 
-     - global.env
     ports:
      - "4001:4001"
     container_name: service1_container
@@ -18,11 +16,12 @@ services:
      - SENTRY_TOKEN=${SENTRY_TOKEN}
      - SERVER_PORT=4001
      - SERVER_NAME=service1
+     - LOG_DIR=./log/
+     - NODE_ENV=production
+     - MONGO_SERVICE_HOSTNAME=mongodb
   nodejs-server2:
-    build: https://github.com/akinaru/node-docker-template.git
+    build: .
     image: node-service2
-    env_file: 
-     - global.env
     ports:
      - "4002:4002"
     container_name: service2_container
@@ -36,11 +35,12 @@ services:
      - SENTRY_TOKEN=${SENTRY_TOKEN}
      - SERVER_PORT=4002
      - SERVER_NAME=service2
+     - LOG_DIR=./log/
+     - NODE_ENV=production
+     - MONGO_SERVICE_HOSTNAME=mongodb
   nodejs-server3:
-    build: https://github.com/akinaru/node-docker-template.git
+    build: .
     image: node-service3
-    env_file: 
-     - global.env
     ports:
      - "4003:4003"
     container_name: service3_container
@@ -54,6 +54,9 @@ services:
      - SENTRY_TOKEN=${SENTRY_TOKEN}
      - SERVER_PORT=4003
      - SERVER_NAME=service3
+     - LOG_DIR=./log/
+     - NODE_ENV=production
+     - MONGO_SERVICE_HOSTNAME=mongodb
   mongodb:
     image: mongo:3.2
     container_name: mongodb_container
@@ -65,12 +68,20 @@ services:
   logstash:
     image: logstash
     container_name: logstash_container
-    command: logstash -f /var/www/logstash-actual.conf
+    command: /bin/bash -c "apt-get update;apt-get -y install gettext;rm /logstash/logstash-ex.conf;envsubst < /logstash/logstash.conf > /logstash/logstash-ex.conf;logstash -f /logstash/logstash-ex.conf"
     volumes:
      - ./key:/key
      - ./log:/log
-     - ./logstash:/var/www
+     - ./logstash:/logstash
      - ./mongodb/log:/mongodb/log
+    environment:
+     - ES_HOST=${ES_HOST}
+     - ES_PORT=${ES_PORT}
+     - ES_USER=${ES_USER}
+     - ES_PASS=${ES_PASS}
+     - ES_USESSL=${ES_USESSL}
+     - ES_KEYSTORE_PATH=${ES_KEYSTORE_PATH}
+     - ES_KEYSTORE_PASS=${ES_KEYSTORE_PASS}
   cadvisor:
     image: google/cadvisor
     container_name: cadvisor_container

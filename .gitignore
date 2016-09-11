@@ -3,6 +3,7 @@ key/
 log/
 mongodb/
 mongodb_dir/
-logstash/logstash-actual.conf
+logstash/logstash-*.conf
 service/node_modules
 *.log
+vars
