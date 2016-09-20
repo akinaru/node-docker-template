@@ -1,0 +1,65 @@
+version: '2'
+
+volumes:
+    service_log: {}
+    mongodb_log: {}
+    mongodb_data: {}
+
+services:
+  nodejs-server:
+    build: .
+    ports:
+     - "4001:4001"
+    restart: always
+    container_name: service_container
+    volumes:
+     - service_log:/app/log
+    external_links:
+     - mongodb_container
+    depends_on:
+     - mongodb
+    environment:
+     - SENTRY_TOKEN=${SENTRY_TOKEN}
+     - SERVER_PORT=4001
+     - SERVER_NAME=node-service
+     - LOG_DIR=./log/
+     - NODE_ENV=production
+     - MONGO_SERVICE_HOSTNAME=mongodb
+  mongodb:
+    image: mongo:3.2
+    container_name: mongodb_container
+    restart: always
+    command: /bin/bash -c "chown -R mongodb /var/log/mongodb; mongod --config /etc/mongodb/mongod.conf"
+    volumes:
+     - mongodb_log:/var/log/mongodb
+     - ./mongodb/conf/mongod.conf:/etc/mongodb/mongod.conf
+     - mongodb_data:/var/lib/mongodb
+  logstash:
+    image: logstash
+    container_name: logstash_container
+    restart: always
+    command: /bin/bash -c "logstash -f /logstash/logstash.conf"
+    volumes:
+     - ./key:/key
+     - service_log:/log
+     - ./logstash:/logstash
+     - mongodb_log:/mongodb/log
+    environment:
+     - ES_HOST=${ES_HOST}
+     - ES_PORT=${ES_PORT}
+     - ES_USER=${ES_USER}
+     - ES_PASS=${ES_PASS}
+     - ES_USESSL=${ES_USESSL}
+     - ES_KEYSTORE_PATH=${ES_KEYSTORE_PATH}
+     - ES_KEYSTORE_PASS=${ES_KEYSTORE_PASS}
+  cadvisor:
+    image: google/cadvisor
+    container_name: cadvisor_container
+    restart: always
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    ports:
+     - "4000:8080"

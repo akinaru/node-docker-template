@@ -1,20 +1,23 @@
-FROM node:6.5.0
-MAINTAINER Bertrand Martel "bmartel.fr@gmail.com"
+FROM node:latest
+
+MAINTAINER Bertrand Martel <bmartel.fr@gmail.com>
+
+# Create app directory
+RUN mkdir -p /usr/src/app
+WORKDIR /usr/src/app
 
 # install pm2 (node package manager) & setup pm2 start script
 RUN npm install -g pm2
 
-ADD service /app
+# Install app dependencies
+COPY service/package.json /usr/src/app/
+RUN npm install
+RUN npm rebuild
+
+# Bundle app source
+COPY ./service /usr/src/app
+
 ADD start.sh /var/www/
 RUN chmod +x /var/www/start.sh
-
-EXPOSE 80
-
-WORKDIR /app
-
-RUN mkdir -p log
-RUN npm install
-
-ENV APP "app.js"
 
 CMD ["/var/www/start.sh"] 

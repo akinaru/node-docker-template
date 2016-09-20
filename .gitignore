@@ -1,9 +1,6 @@
 stackfile.yml
-key/
-log/
-mongodb/
-mongodb_dir/
-logstash/logstash-*.conf
+docker-compose.yml
+key/keystore.jks
+logstash/logstash.conf
 service/node_modules
-*.log
 vars

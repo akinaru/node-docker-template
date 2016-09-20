@@ -1,0 +1,9 @@
+export USER_PATH=/home/bobby
+export SENTRY_TOKEN=https://XXXXXXXXXXXXXXXXXXXXXX@sentry.io/XXXXX
+export ES_HOST=your.elasticsearch.host
+export ES_PORT=9200
+export ES_USER=logstash
+export ES_PASS=logstash
+export ES_USESSL=true
+export ES_KEYSTORE_PATH=/key/keystore.jks
+export ES_KEYSTORE_PASS=changeme

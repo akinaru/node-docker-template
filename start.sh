@@ -1,3 +1,5 @@
 #!/bin/bash
 
-pm2 start $APP --no-daemon
+npm rebuild
+
+pm2 start app.js --no-daemon

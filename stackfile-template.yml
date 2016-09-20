@@ -1,51 +1,23 @@
-nodejs-server1:
+nodejs-server:
   image: '${DOCKER_ID_USER}/node-service'
   ports:
     - "5001:4001"
   volumes:
     - ${USER_PATH}/log:/app/log
+  restart: always
   links:
     - mongo:mongo
   environment:
     - NODE_ENV=production
     - LOG_DIR=./log/
     - SERVER_PORT=4001
-    - SERVER_NAME=service1
-    - MONGO_SERVICE_HOSTNAME=mongo
-    - SENTRY_TOKEN=${SENTRY_TOKEN}
-nodejs-server2:
-  image: '${DOCKER_ID_USER}/node-service'
-  ports:
-    - "5002:4002"
-  volumes:
-    - ${USER_PATH}/log:/app/log
-  links:
-    - mongo:mongo
-  environment:
-    - NODE_ENV=production
-    - LOG_DIR=./log/
-    - SERVER_PORT=4002
-    - SERVER_NAME=service2
-    - MONGO_SERVICE_HOSTNAME=mongo
-    - SENTRY_TOKEN=${SENTRY_TOKEN}
-nodejs-server3:
-  image: '${DOCKER_ID_USER}/node-service'
-  ports:
-    - "5003:4003"
-  volumes:
-    - ${USER_PATH}/log:/app/log
-  links:
-    - mongo:mongo
-  environment:
-    - NODE_ENV=production
-    - LOG_DIR=./log/
-    - SERVER_PORT=4003
-    - SERVER_NAME=service3
+    - SERVER_NAME=node-service
     - MONGO_SERVICE_HOSTNAME=mongo
     - SENTRY_TOKEN=${SENTRY_TOKEN}
 mongo:
   image: mongo:3.2
   command: /bin/bash -c "chown -R mongodb /var/log/mongodb; mongod --config /etc/mongodb/mongod.conf"
+  restart: always
   volumes:
    - ${USER_PATH}/mongodb/log:/var/log/mongodb
    - ${USER_PATH}/mongodb/conf/mongod.conf:/etc/mongodb/mongod.conf
@@ -53,12 +25,14 @@ mongo:
 logstash:
   image: 'logstash'
   command: logstash -e '${LOGSTASH_CONFIG}'
+  restart: always
   volumes:
    - ${USER_PATH}/key:/key
    - ${USER_PATH}/log:/log
    - ${USER_PATH}/mongodb/log:/mongodb/log
 cadvisor:
   image: 'google/cadvisor'
+  restart: always
   volumes:
     - /:/rootfs:ro
     - /var/run:/var/run:rw
