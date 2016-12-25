@@ -10,7 +10,7 @@ install:
 # Assist with ci test debugging:
 #   - DEBUG=1
 before_script:
-    - image="akinaru/node-docker-template"
+    - image="bertrandmartel/node-docker-template"
     - docker build -t "$image" .
     - docker inspect "$image"
 
